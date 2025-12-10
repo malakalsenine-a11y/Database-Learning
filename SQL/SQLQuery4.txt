@@ -1,0 +1,63 @@
+create database COMP
+use COMP
+
+CREATE TABLE Employees(
+    SSN INT PRIMARY KEY,
+    FirstName VARCHAR(20) NOT NULL,
+    LastName VARCHAR(30) NOT NULL,
+    Gender VARCHAR(20) NOT NULL,
+    Superid INT,
+    Birthday DATE,
+    FOREIGN KEY (Superid) REFERENCES Employees(SSN)
+);
+
+CREATE TABLE Department(
+    DepartmentNumber INT PRIMARY KEY,
+    DepartmentName VARCHAR(40) NOT NULL,
+    Hiredate DATE,
+    SSN INT,
+    FOREIGN KEY (SSN) REFERENCES Employees(SSN)
+);
+
+CREATE TABLE DepartmentTlocation(
+    Location VARCHAR(50),
+    DNum INT,
+    PRIMARY KEY(Location, DNum), 
+    FOREIGN KEY(DNum) REFERENCES Department(DepartmentNumber)
+);
+
+CREATE TABLE Project(
+    ProjectNumber INT PRIMARY KEY,
+    PName VARCHAR(50) NOT NULL,
+    City VARCHAR(50),
+    Location VARCHAR(50),
+    DNum INT,
+    FOREIGN KEY(DNum) REFERENCES Department(DepartmentNumber)
+);
+
+CREATE TABLE EmplProject(
+    SSN INT NOT NULL,
+    ProjectNumber INT NOT NULL,
+    Hours INT, 
+    PRIMARY KEY(SSN, ProjectNumber),
+    FOREIGN KEY(SSN) REFERENCES Employees(SSN),
+    FOREIGN KEY(ProjectNumber) REFERENCES Project(ProjectNumber)
+);
+
+CREATE TABLE Dependent(
+    DependentName VARCHAR(50),
+    Gender VARCHAR(20) NOT NULL,
+    BirthDate DATE,
+    SSN INT,
+    PRIMARY KEY(DependentName, SSN),
+    FOREIGN KEY(SSN) REFERENCES Employees(SSN)
+);
+
+CREATE TABLE Compositte(
+    HiringDate DATE,
+    CSSN INT,
+    CDNum INT,
+    PRIMARY KEY(CSSN, CDNum),
+    FOREIGN KEY(CSSN) REFERENCES Employees(SSN),
+    FOREIGN KEY(CDNum) REFERENCES Department(DepartmentNumber)
+);
