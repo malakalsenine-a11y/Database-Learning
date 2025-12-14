@@ -1,0 +1,79 @@
+--Company DB -DML & DQL Task--
+--DQL--
+
+--Q1:Display all employee data.-- 
+select * from Employee;
+--Q2: Display employee first name, last name, salary, and department number.--
+Select Fname,Lname,Salary,Dno
+from Employee;
+--Q3: Display each employee’s full name and their annual commission (10% of annual
+salary) as ANNUAL_COMM --
+select Fname + '' + Lname as FullName,
+(Salary * 12) * 0.10 as annual_comm
+from Employee
+
+-- Q4: Display employee ID and name for employees earning more than 1000 LE monthly--
+SELECT 
+    SSN,
+    Fname + ' ' + Lname AS Name
+FROM Employee
+WHERE Salary > 1000;
+--Q5: Display employee ID and name for employees earning more than 10000 LE
+annually.--
+SELECT 
+    SSN,
+    Fname + ' ' + Lname AS Name
+FROM Employee
+WHERE Salary * 12 > 1000;
+--Q6: Display names and salaries of all female employees.--
+SELECT 
+    Fname + ' ' + Lname AS Name
+FROM Employee
+WHERE Sex = 'F';
+--Q7: Display employees whose salary is between 2000 and 5000--
+select * from Employee
+Where Salary between 2000 and 5000;
+--Q8: Display employee names ordered by salary descending--
+select
+    Fname + ' ' + Lname AS Name
+	from Employee
+	order by Salary desc
+	--Q9:Display the maximum, minimum, and average salary.--
+	select 
+	MAX(Salary) as MaxSalary,
+	Min(Salary) as MinsaLARY,
+	AVG(Salary) AS AvgSalary
+	from Employee;
+
+	--	Q10: Display the total number of employees.--
+	SELECT COUNT(*) AS TotalEmployees
+    FROM Employee;
+	--Q11: 11. Display employees whose first name starts with 'A'--
+	SELECT * FROM Employee
+	WHERE Fname like 'A%';
+	--Q12: Display employees who have no supervisor--
+	SELECT *
+FROM Employee
+WHERE Superssn IS NULL;
+
+--DML--
+--Q14: Insert your personal data into the employee table (Department = 30, SSN = 102672, Superssn = 112233, Salary = 3000).-- 
+
+INSERT INTO Employee
+(SSN, Fname, Lname, Sex, Bdate,Address,Superssn, Salary, Dno)
+VALUES
+(102672, 'Malak', 'Al-Sinani', 'F', '2001-10-28','AL-Suwaig', 112233, 3000, 30);
+
+--Q15: Insert another employee (your friend) in department 30 with SSN = 102660, leaving salary and supervisor number NULL.-- 
+INSERT INTO Employee
+(SSN, Fname, Lname, Sex, Bdate, Superssn, Salary, Dno)
+VALUES
+(102660, 'Rawan', 'Al-Hinai', 'Female', '2002-05-10', NULL, NULL, 30);
+--Q16:Update your salary by 20%--
+UPDATE Employee
+SET Salary = Salary * 1.20
+WHERE SSN = 102672;
+--Q17:  Increase salaries by 5% for all employees in department 30.--
+UPDATE Employee
+SET Salary = Salary * 1.05
+WHERE Dno = 30;
