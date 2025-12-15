@@ -1,0 +1,111 @@
+--University Database – DQL & DML Task--
+--DQL--
+-- Q1: Display all student records.--
+SELECT * 
+FROM Student;
+-- Q2: Display each student's full name, enrollment date, and current status.--
+SELECT 
+    Fname + ' ' + Lname AS Full_Name,
+    Enrollment_date,
+    Status
+FROM Student;
+-- Q3: Display each course title and credits.--
+SELECT 
+    Course_name AS Course_Title,
+    Credits
+FROM Course;
+-- Q4: Display each student’s full name and GPA as GPA Score.--
+SELECT 
+    Fname + ' ' + Lname AS Full_Name,
+    GPA AS [GPA Score]
+FROM Student;
+
+-- Q5: List student IDs and names of students with GPA greater than 3.5--
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name
+FROM Student
+WHERE GPA > 3.5;
+
+-- Q6: List students who enrolled before 2022--
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name,
+    Enrollment_date
+FROM Student
+WHERE Enrollment_date < '2022-01-01';
+
+-- Q7: Display students with GPA between 3.0 and 3.5.
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name,
+    GPA
+FROM Student
+WHERE GPA BETWEEN 3.0 AND 3.5;
+
+--Q8: Display students ordered by GPA descending--
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name,
+    GPA
+FROM Student
+ORDER BY GPA DESC;
+--Q9: Display the maximum, minimum, and average GPA--
+SELECT 
+    MAX(GPA) AS Max_GPA,
+    MIN(GPA) AS Min_GPA,
+    AVG(GPA) AS Avg_GPA
+FROM Student;
+
+--Q10: Display total number of students--
+SELECT COUNT(*) AS Total_Students
+FROM Student;
+--Q11: Display students whose names end with 'a'--
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name
+FROM Student
+WHERE Fname LIKE '%a';
+--Q12: Display students with NULL advisor--
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name
+FROM Student
+WHERE Faculty_id IS NULL;
+--Q13:Display students enrolled in 2021--
+SELECT 
+    S_id,
+    Fname + ' ' + Lname AS Full_Name,
+    Enrollment_date
+FROM Student
+WHERE YEAR(Enrollment_date) = 2021;
+
+-- DML--
+--Q14: Insert your data as a new student (Student ID = 300045, Program ID = 2, GPA = 3.6).--
+SET IDENTITY_INSERT Student ON;
+INSERT INTO Student (S_id, Fname, Lname, Department_id, GPA)
+VALUES (300045, 'Rayan', 'SALIM', 3, 3.6);
+SET IDENTITY_INSERT Student OFF;
+
+--Q15:  Insert another student (your friend) with GPA and advisor set to NULL --
+INSERT INTO Student (Fname, Lname, Department_id, GPA, Faculty_id)
+VALUES ('Sara', 'Al-Hinai', 5, NULL, NULL);
+
+--Q16:  Increase your GPA by 0.2.--
+UPDATE Student
+SET GPA = GPA + 0.2
+WHERE S_id = 300045;
+
+--Q17: Set GPA to 2.0 for students with GPA below 2.0--
+UPDATE Student
+SET GPA = 2.0
+WHERE GPA < 2.0;
+
+--Q18: Increase GPA by 0.1 for students enrolled before 2020--
+UPDATE Student
+SET GPA = GPA + 0.1
+WHERE Enrollment_date < '2022-01-01';
+
+--Q19: Delete students with status 'Inactive'.--
+DELETE FROM Student
+WHERE Status = 'Inactive';
