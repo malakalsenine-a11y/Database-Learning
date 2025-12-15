@@ -1,0 +1,118 @@
+Create database AIRPLANE
+Use AIRPLANE;
+
+CREATE TABLE Airport (
+    airport_code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(30),
+    state VARCHAR(30)
+);
+CREATE TABLE Flight (
+    flight_no INT PRIMARY KEY,
+    airline VARCHAR(30),
+    weekdays VARCHAR(20),
+    restrictions VARCHAR(100)
+);
+
+CREATE TABLE Flight_Leg (
+    leg_no INT PRIMARY KEY,
+    flight_no INT,
+    dep_airport VARCHAR(10),
+    arr_airport VARCHAR(10),
+    scheduled_dep_time TIME,
+    scheduled_arr_time TIME,
+    FOREIGN KEY (flight_no) REFERENCES Flight(flight_no),
+    FOREIGN KEY (dep_airport) REFERENCES Airport(airport_code),
+    FOREIGN KEY (arr_airport) REFERENCES Airport(airport_code)
+);
+
+CREATE TABLE Airplane_Type (
+    type_name VARCHAR(30) PRIMARY KEY,
+    company VARCHAR(30),
+    max_seats INT
+);
+
+CREATE TABLE Airplane (
+    airplane_id INT PRIMARY KEY,
+    total_seats INT,
+    type_name VARCHAR(30),
+    FOREIGN KEY (type_name) REFERENCES Airplane_Type(type_name)
+);
+
+CREATE TABLE Leg_Instance (
+    leg_no INT,
+    leg_date DATE,
+    dep_time TIME,
+    arr_time TIME,
+    available_seats INT,
+    airplane_id INT,
+    PRIMARY KEY (leg_no, leg_date),
+    FOREIGN KEY (leg_no) REFERENCES Flight_Leg(leg_no),
+    FOREIGN KEY (airplane_id) REFERENCES Airplane(airplane_id)
+);
+CREATE TABLE Reservation (
+    reservation_id INT PRIMARY KEY IDENTITY(1,1),
+    customer_name VARCHAR(50),
+    phone VARCHAR(15),
+    seat_no VARCHAR(5),
+    leg_no INT,
+    leg_date DATE,
+    FOREIGN KEY (leg_no, leg_date)
+    REFERENCES Leg_Instance(leg_no, leg_date)
+);
+
+CREATE TABLE Fare (
+    fare_code VARCHAR(10),
+    flight_no INT,
+    amount DECIMAL(8,2),
+    PRIMARY KEY (fare_code, flight_no),
+    FOREIGN KEY (flight_no) REFERENCES Flight(flight_no)
+);
+
+INSERT INTO Airport (airport_code, name, city, state)
+VALUES 
+('MCT', 'Muscat Intl', 'Muscat', 'Muscat'),
+('DXB', 'Dubai Intl', 'Dubai', 'Dubai');
+Select * from Airport;
+
+INSERT INTO Airplane_Type (type_name, company, max_seats)
+VALUES 
+('A320', 'Airbus', 180),
+('B737', 'Boeing', 160);
+Select * from Airplane_Type;
+
+INSERT INTO Airplane (airplane_id, total_seats, type_name)
+VALUES
+(1, 180, 'A320'),
+(2, 160, 'B737');
+Select * from Airplane;
+
+INSERT INTO Flight (flight_no, airline, weekdays, restrictions)
+VALUES
+(1001, 'Oman Air', 'Sun-Mon', 'None'),
+(1002, 'Emirates', 'Tue-Fri', 'No Pets');
+Select * from Flight;
+
+INSERT INTO Flight_Leg (leg_no, flight_no, dep_airport, arr_airport, scheduled_dep_time, scheduled_arr_time)
+VALUES
+(10, 1001, 'MCT', 'DXB', '08:00', '09:30'),
+(11, 1002, 'DXB', 'MCT', '14:00', '15:30');
+Select * from Flight_Leg;
+
+INSERT INTO Leg_Instance (leg_no, leg_date, dep_time, arr_time, available_seats, airplane_id)
+VALUES
+(10, '2025-01-15', '08:05', '09:35', 50, 1),
+(11, '2025-01-16', '14:05', '15:40', 40, 2);
+Select * from Leg_Instance;
+
+INSERT INTO Reservation (customer_name, phone, seat_no, leg_no, leg_date)
+VALUES
+('Ali Al-Balushi', '+96891234567', '1A', 10, '2025-01-15'),
+('Sara Al-Hinai', '+96891234568', '2B', 11, '2025-01-16');
+Select * from Reservation;
+
+INSERT INTO Fare (fare_code, flight_no, amount)
+VALUES
+('ECO', 1001, 45.00),
+('BUS', 1001, 120.00);
+ Select * From Fare;
