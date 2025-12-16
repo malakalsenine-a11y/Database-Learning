@@ -1,0 +1,94 @@
+-- Airline Database – DQL & DML Tasks--
+-- First DQL--
+--1. Display all flight leg records.--
+Select * from Flight_Leg;
+
+--2. Display each flight leg ID, scheduled departure time, and arrival time.--
+Select leg_no, scheduled_dep_time, scheduled_arr_time
+From Flight_Leg;
+
+--3. Display each airplane’s ID, type, and seat capacity.--
+
+Select airplane_id, TYPE_NAME, total_seats
+from Airplane;
+--4. Display each flight leg’s ID and available seats as AvailableSeats.--
+select leg_no, available_seats as AvailableSeats
+FROM Leg_Instance;
+
+--5. List flight leg IDs with available seats greater than 5. --
+SELECT leg_no
+FROM Leg_Instance
+WHERE available_seats > 5;
+
+--6. List airplane IDs with seat capacity above 10. --
+Select airplane_id
+From Airplane
+Where total_seats > 10;
+--7. Display airport codes and names where city = 'Cairo'. --
+Select airport_code, name 
+From Airport
+where city = 'Cairo';
+
+--8. Display flight legs scheduled on 2025-06-10. --
+SELECT *
+FROM Leg_Instance
+WHERE leg_date = '2025-1-15';
+
+--9. Display flight legs ordered by departure time.--
+SELECT *
+FROM Flight_Leg
+ORDER BY scheduled_dep_time;
+
+--10. Display the maximum, minimum, and average available seats. --
+SELECT 
+    MAX(available_seats) AS MaxSeats,
+    MIN(available_seats) AS MinSeats,
+    AVG(available_seats) AS AvgSeats
+FROM Leg_Instance;
+
+--11. Display total number of flight legs. --
+SELECT COUNT(*) AS TotalFlightLegs
+FROM Flight_Leg;
+
+--12. Display airplanes whose type contains 'Boeing'--
+SELECT A.airplane_id, T.type_name
+FROM Airplane A
+JOIN Airplane_Type T
+ON A.type_name = T.type_name
+WHERE T.company LIKE '%Boeing%';
+
+--DML--
+--13️: Insert a new flight leg departing from CAI to DXB on 2025-06-10--
+--اضيف مطار جديدة --
+INSERT INTO Airport (airport_code, name, city, state)
+VALUES ('CAI', 'Cairo Intl', 'Cairo', 'Cairo');
+Select * from Airport;
+
+-- أضيف الرحلة الجديدة في Flight_Leg --
+INSERT INTO Flight_Leg
+(leg_no, flight_no, dep_airport, arr_airport, scheduled_dep_time, scheduled_arr_time)
+VALUES
+(20, 1001, 'CAI', 'DXB', '10:00', '14:00');
+
+-- الحين ادخل Leg_Instance للرحلة بتاريخ محدد --
+INSERT INTO Leg_Instance(leg_no, leg_date, dep_time, arr_time, available_seats, airplane_id)
+VALUES (10, '2025-06-10', '10:05', '14:10', 120, 1);
+
+--14: Insert a customer with NULL contact number--
+INSERT INTO Reservation (customer_name, phone, seat_no, leg_no, leg_date)
+VALUES ('Ali Al-Balushi', NULL, '1A', 10, '2025-06-10');
+
+--15: Reduce available seats of your inserted flight leg by 5.--
+UPDATE Leg_Instance
+SET available_seats = available_seats - 5
+WHERE leg_no = 30
+  AND leg_date = '2025-06-10';
+
+--17: Update airplane seat capacity by +20 where capacity < 150.--
+UPDATE Airplane
+SET total_seats = total_seats + 20
+WHERE total_seats < 150;
+
+--18: Delete canceled flight legs.--
+DELETE FROM Leg_Instance
+WHERE available_seats = 0;
