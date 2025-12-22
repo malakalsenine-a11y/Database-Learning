@@ -1,103 +1,95 @@
-create database Hotel
-use Hotel;
+--Hotel Database – JOIN Queries--
 
-CREATE TABLE Branch (
-    branch_id INT PRIMARY KEY IDENTITY(1,1),
-    name NVARCHAR(50) NOT NULL,
-    location NVARCHAR(100) NOT NULL
-);
-CREATE TABLE Room (
-    room_no INT,
-    branch_id INT,
-    type NVARCHAR(30),
-    nightly_rate DECIMAL(8,2),
-    PRIMARY KEY (room_no, branch_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-);
-CREATE TABLE Customer (
-    customer_id INT PRIMARY KEY IDENTITY(1,1),
-    name NVARCHAR(50) NOT NULL,
-    phone VARCHAR(15),
-    email VARCHAR(50)
-);
-CREATE TABLE Booking (
-    booking_id INT PRIMARY KEY IDENTITY(1,1),
-    customer_id INT,
-    check_in DATE,
-    check_out DATE,
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
-);
-CREATE TABLE Booking_Room (
-    booking_id INT,
-    room_no INT,
-    branch_id INT,
-    PRIMARY KEY (booking_id, room_no, branch_id),
-    FOREIGN KEY (booking_id) REFERENCES Booking(booking_id),
-    FOREIGN KEY (room_no, branch_id) REFERENCES Room(room_no, branch_id)
-);
-CREATE TABLE Staff (
-    staff_id INT PRIMARY KEY IDENTITY(1,1),
-    branch_id INT,
-    name NVARCHAR(50),
-    job_title NVARCHAR(30),
-    salary DECIMAL(8,2),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-);
-CREATE TABLE Staff_Action (
-    staff_id INT,
-    booking_id INT,
-    role NVARCHAR(20),
-    PRIMARY KEY (staff_id, booking_id),
-    FOREIGN KEY (staff_id) REFERENCES Staff(staff_id),
-    FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
-);
-
-INSERT INTO Branch (name, location) 
-VALUES
-('Muscat Main', 'Muscat, Oman'),
-('Salalah Resort', 'Salalah, Oman'),
-('Sohar Resort', 'Sohar, Oman');
-Select * from Branch;
-
-INSERT INTO Room (room_no, branch_id, type, nightly_rate) 
-VALUES
-(101, 1, 'Single', 50.00),
-(102, 2, 'Double', 80.00),
-(201, 5, 'Suite', 150.00);
-Select * from room;
-
-INSERT INTO Customer (name, phone, email) 
-VALUES
-('Khaled Al-Balushi', '+96891234567', 'Khaled@example.com'),
-('Sara Al-Hinai', '+96891234568', 'sara@example.com'),
-('Malak AL-Sinani', '+96896674984', 'malak@example.com' );
 Select * from Customer;
+Select * from Booking;
+Select * from Booking_Room;
+Select * from Branch;
+Select * from Room;
+Select * from Staff;
+Select * from Staff_Action;
 
-INSERT INTO Booking (customer_id, check_in, check_out) 
-VALUES
-(1, '2025-12-20', '2025-12-25'),
-(2, '2025-12-21', '2025-12-23'),
-(3, '2025-12-22', '2025-12-30');
+--1. Display hotel ID, name, and the name of its manager.--
+SELECT b.branch_id, b.name AS branch_name, s.name AS manager_name
+FROM Branch b
+JOIN 
+Staff s ON b.branch_id = s.branch_id
+WHERE s.job_title = 'Manager';
+
+--2. Display hotel names and the rooms available under them.--
+SELECT b.name AS branch_name, r.room_no
+FROM Branch b
+JOIN Room r ON b.branch_id = r.branch_id
+ORDER BY 
+b.branch_id, r.room_no;
+
+
+--3. Display guest data along with the bookings they made.--
+Select * from Customer;
 Select * from Booking;
 
-INSERT INTO Booking_Room (booking_id, room_no, branch_id) 
-VALUES
-(4, 101, 1),
-(5, 102, 2),
-(6, 201, 5);
-select * from Booking_Room;
+SELECT * FROM Customer c
+JOIN Booking b ON c.customer_id = b.customer_id;
 
-INSERT INTO Staff (branch_id, name, job_title, salary) 
-VALUES
-(1, 'Hassan', 'Receptionist', 400.00),
-(2, 'Fatma', 'Manager', 800.00),
-(5, 'Elham', 'IT',600.00);
-select * from Staff;
+--4. Display bookings for hotels in 'Muscat Main' or 'Salalah Resort'.--
+SELECT b.booking_id, b.customer_id, b.check_in, b.check_out
+FROM  Booking b
+JOIN Booking_Room brm ON b.booking_id = brm.booking_id
+JOIN Room r ON brm.room_no = r.room_no AND brm.branch_id = r.branch_id
+JOIN Branch br ON r.branch_id = br.branch_id
+WHERE br.name IN ('Muscat Main', 'Salalah Resort');
 
-INSERT INTO Staff_Action (staff_id, booking_id, role) 
-VALUES
-(1, 4, 'check-in'),
-(3, 5, 'check-out'),
-(2, 6, 'check-in');
-select * from Staff_Action;
 
+--5. Display all room records where room type starts with "S" (e.g., "Suite", "Single").--
+SELECT *
+FROM Room
+WHERE type LIKE 'S%';
+
+--6. List guests who booked rooms priced between 50 and 165 LE.--
+SELECT DISTINCT c.*
+FROM Customer c
+JOIN Booking b ON c.customer_id = b.customer_id
+JOIN Booking_Room brm ON b.booking_id = brm.booking_id
+JOIN Room r ON brm.room_no = r.room_no AND brm.branch_id = r.branch_id
+WHERE r.nightly_rate BETWEEN 50 AND 165;
+
+
+--7. Retrieve guest names who have bookings marked as 'Confirmed' in hotel "Hilton Downtown".--
+-- ما عندي status--
+
+--8. Find guests whose bookings were handled by staff member "Hassan".--
+SELECT DISTINCT c.name AS customer_name
+FROM Customer c
+JOIN Booking b ON c.customer_id = b.customer_id
+JOIN Staff_Action sa ON b.booking_id = sa.booking_id
+JOIN Staff s ON sa.staff_id = s.staff_id
+WHERE s.name = 'Hassan';
+
+--9. Display each guest’s name and the rooms they booked, ordered by room type.--
+SELECT c.name AS customer_name, r.room_no, r.type AS room_type
+FROM Customer c
+JOIN Booking b ON c.customer_id = b.customer_id
+JOIN Booking_Room brm ON b.booking_id = brm.booking_id
+JOIN Room r ON brm.room_no = r.room_no AND brm.branch_id = r.branch_id
+ORDER BY r.type;
+
+--10. For each hotel in 'Salalah Resort', display hotel ID, name, manager name, and contact info.--
+--    Contact info ما معنى --
+SELECT * FROM Branch;
+SELECT * FROM Staff;
+SELECT 
+    br.branch_id,
+    br.name AS hotel_name,
+    s.name AS manager_name
+FROM Branch br
+JOIN Staff s ON br.branch_id = s.branch_id
+WHERE br.name = 'Salalah Resort'
+  AND s.job_title = 'Manager';
+
+
+--11. Display all staff members who hold 'Manager' positions.--
+SELECT *
+FROM Staff
+WHERE job_title = 'Manager';
+
+--12. Display all guests and their reviews, even if some guests haven't submitted any reviews.--
+-- ما فيه معنا  Reviews--
