@@ -163,3 +163,22 @@ The hardest part was understanding how GROUP BY works with multiple calculations
 
 GROUP BY groups rows that have the same value in a column so that we can calculate totals, averages, or other aggregates for each group.
 بعد ما يتاثر ب WHERE بس يتاثر ب  HAVING.
+
+Day 1 Mini Challenge
+Course Performance Snapshot
+Show:
+• Course title
+• Total enrollments
+• Average rating
+• Average completion %
+
+SELECT 
+    C.Title, 
+    I.FullName,
+    COUNT(E.StudentID) AS TotalEnrollments
+FROM Courses C
+JOIN Instructors I
+    ON C.InstructorID = I.InstructorID
+JOIN Enrollments E
+    ON C.CourseID = E.CourseID
+GROUP BY C.Title, I.FullName;

@@ -1,0 +1,11 @@
+--Day 2 – JOIN + Aggregation + Analysis--
+--Part 4: JOIN + Aggregation--
+
+--1. Course title + instructor name + enrollments.--
+
+--2. Category name + total courses + average price.--
+--3. Instructor name + average course rating.--
+--4. Student name + total courses enrolled.--
+--5. Category name + total enrollments.--
+--6. Instructor name + total revenue.--
+--7. Course title + % of students completed 100%.--
